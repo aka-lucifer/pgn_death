@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PGN Interaction Menu</title>
+
+    
+    <!--Google Icon Font -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500,500i,700,700i" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="./libraries/css/all.css" />
+    <link rel="stylesheet" href="./libraries/css/all.min.css" />
+
+    <!-- Vuetify -->
+    <link rel="stylesheet" href="./libraries/css/vuetify.css">
+    
+    <!-- Material -->
+    <link rel="stylesheet" href="./libraries/css/material.css">
+
+    <!-- Default CSS -->
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+    
+    <div id="app" v-show="visible">
+        <div id="menu_base" v-bind:class="{ 'top-left': MenuPosition == 'top-left', 'top-right': MenuPosition == 'top-right', 'middle-left': MenuPosition == 'middle-left', 'middle-right': MenuPosition == 'middle-right', 'bottom-left': MenuPosition == 'bottom-left', 'bottom-right': MenuPosition == 'bottom-right' }">
+            <div id="menu_header">
+                <!-- <hr class="left_line"> -->
+                {{ MenuName }}
+                <!-- <hr class="right_line"> -->
+            </div>
+            <div id="menu_body">
+                <div v-for="(comp, compIndex) in MenuComponents">
+
+                    <!-- List -->
+                    <div :id="compIndex" v-if="comp.type == 'list'" class="menu_list" v-bind:class="{ 'menu_list_hovered': compIndex == MenuOption }">
+                        <i class="fa fa-arrow-left fa-1x menu_list_icon_left"></i>
+                        {{ comp.name }} - {{ comp.list[comp.listIndex] }}
+                        <i class="fa fa-arrow-right fa-1x menu_list_icon_right"></i>
+                    </div>
+
+                    <!-- Checkbox -->
+                    <div :id="compIndex" v-else-if="comp.type == 'checkbox'" class="menu_checkbox" v-bind:class="{ 'menu_checkbox_hovered': compIndex == MenuOption, 'menu_checkbox_icon_hovered': compIndex == MenuOption }">
+                        <div style="margin-top: -10px;">{{ comp.name }}</div>
+                        <i v-if="comp.state" class="fa fa-check-square fa-1x menu_checkbox_icon"></i>
+                        <i v-else class="fa fa-square fa-1x menu_checkbox_icon"></i>
+                    </div>
+
+                    <!-- Button -->
+                    <div :id="compIndex" v-else class="menu_button" v-bind:class="{ 'menu_button_hovered': compIndex == MenuOption }">
+                        <div class="button_text">{{ comp.name }}</div>
+                    </div>
+                </div>
+
+                <!-- <div class="menu_footer"> -->
+                    <!-- <div class="footer_text"></div> -->
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+
+    <div id="kidnap_container"></div>
+
+    <script src="./libraries/js/vue.js"></script>
+    <script src="events.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
