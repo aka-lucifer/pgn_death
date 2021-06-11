@@ -1,2 +1,2 @@
-### 📷 [PGN Scoreboard]
+### [PGN Death]
 <hr>
