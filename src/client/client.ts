@@ -1,10 +1,11 @@
-import { Game, VehicleSeat } from "fivem-js";
+import { ExplosionType, Game, VehicleSeat, World } from "fivem-js";
 import { Events } from "./enums/events";
 import * as Utils from "./utils";
 import Config from "../configs/client.json";
 import { AnimType } from "./enums/animType";
 import { MenuManager } from "./managers/menu";
 import { Menu } from "./models/menu/menu";
+import { SSL_OP_ALL } from "constants";
 
 let deathTick = -1;
 let lastAnim;
@@ -23,6 +24,11 @@ export class Client {
         // Handles Respawning
         RegisterKeyMapping("+respawn_player", "Respawn yourself", "keyboard", "R");
         RegisterCommand("+respawn_player", this.Respawn.bind(this), false);
+
+        RegisterCommand("explode", () => {
+            const pedCoords = Game.PlayerPed.Position;
+            AddExplosion(pedCoords.x, pedCoords.y, pedCoords.z, ExplosionType.Propane, 10.0, true, false, 10.0);
+        }, false);
     }
 
     // Methods
@@ -55,6 +61,13 @@ export class Client {
             for (let i = 0; i < positions.length; i++) {
                 respawnMenu.Button(positions[i].label, async() => {
                     await Utils.Fade();
+                    RequestCollisionAtCoord(positions[i].x, positions[i].y, positions[i].z)
+
+                    while (!HasCollisionLoadedAroundEntity(Game.PlayerPed.Handle)) {
+                        RequestCollisionAtCoord(positions[i].x, positions[i].y, positions[i].z)
+                        await Utils.Delay(0)
+                    }
+                    
                     Utils.Invincible(false);
                     NetworkResurrectLocalPlayer(positions[i].x, positions[i].y, positions[i].z, positions[i].heading, true, false);
                     DecorSetBool(Game.PlayerPed.Handle, "PLAYER_DEAD", false);
@@ -82,6 +95,10 @@ export class Client {
         deathTick = setTick(async() => {
             if (!DecorGetBool(Game.PlayerPed.Handle, "PLAYER_DEAD")) {
                 if (Game.PlayerPed.isDead()) {
+                    await Utils.Delay(300);
+                    NetworkResurrectLocalPlayer(Game.PlayerPed.Position.x, Game.PlayerPed.Position.y, Game.PlayerPed.Position.z, Game.PlayerPed.Heading, true, false);
+                    SetEntityHealth(Game.PlayerPed.Handle, 150);
+
                     if (Game.PlayerPed.isInVehicle) {
                         pedVeh = Game.PlayerPed.CurrentVehicle;
                     }
@@ -142,7 +159,6 @@ function PlayAnim(type: AnimType): void {
         const animLoaded = HasAnimDictLoaded("dead");
         if (animLoaded) {
             DecorSetBool(Game.PlayerPed.Handle, "PLAYER_DEAD", true);
-            NetworkResurrectLocalPlayer(Game.PlayerPed.Position.x, Game.PlayerPed.Position.y, Game.PlayerPed.Position.z, Game.PlayerPed.Heading, true, false);
             TaskPlayAnim(Game.PlayerPed.Handle, "dead", "dead_a", 1.0, 1.0, -1, 14, 0, false, false, false);
             setTimeout(() => {
                 const playingAnim = IsEntityPlayingAnim(Game.PlayerPed.Handle, "dead", "dead_a", 3);

@@ -15,6 +15,7 @@ export enum Events {
     playerLeftScope = "playerLeftScope",
     playerJoining = "playerJoining",
     playerDropped = "playerDropped",
+    onClientMapStart = "onClientMapStart",
 
     // Base Events
     playerDied = "baseevents:onPlayerDied",

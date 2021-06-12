@@ -21,5 +21,7 @@ files {
 	"ui/script.js"
 }
 
-client_script "dist/client/main.js"
-server_script "dist/server/main.js"
+client_scripts {
+	"processor.lua",
+	"dist/client/main.js"
+}
