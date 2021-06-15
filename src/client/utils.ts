@@ -63,24 +63,21 @@ export function Invincible(newValue: boolean) {
   const ped = Game.PlayerPed.Handle;
 
   if (newValue) {
-    SetEntityInvincible(ped, true)
-    SetPlayerInvincible(PlayerId(), true)
-    SetPedCanRagdoll(ped, false)
-    ClearPedBloodDamage(ped)
-    ResetPedVisibleDamage(ped)
-    ClearPedLastWeaponDamage(ped)
-    SetEntityProofs(ped, true, true, true, true, true, true, true, true)
-    SetEntityOnlyDamagedByPlayer(ped, false)
-    SetEntityCanBeDamaged(ped, false)
+    SetEntityProofs(PlayerPedId(), true, true, true, true, true, true, true, true)
+    SetPedCanRagdoll(PlayerPedId(), false)
+    // SetEntityInvincible(ped, true)
+    // SetPlayerInvincible(PlayerId(), true)
+    // SetPedCanRagdoll(ped, false)
+    // ClearPedBloodDamage(ped)
+    // ResetPedVisibleDamage(ped)
+    // ClearPedLastWeaponDamage(ped)
+    // SetEntityProofs(ped, true, true, true, true, true, true, true, true)
+    // SetEntityOnlyDamagedByPlayer(ped, false)
+    // SetEntityCanBeDamaged(ped, false)
     invincible = true
   } else {
-    SetEntityInvincible(ped, false)
-    SetPlayerInvincible(PlayerId(), false)
-    SetPedCanRagdoll(ped, true)
-    ClearPedLastWeaponDamage(ped)
-    SetEntityProofs(ped, false, false, false, false, false, false, false, false)
-    SetEntityOnlyDamagedByPlayer(ped, false)
-    SetEntityCanBeDamaged(ped, true)
+    SetEntityProofs(PlayerPedId(), false, false, false, false, false, false, false, false)
+    SetPedCanRagdoll(PlayerPedId(), true)
     invincible = false
   }
 }

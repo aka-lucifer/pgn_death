@@ -45,6 +45,7 @@ export class Client {
         if (DecorGetBool(Game.PlayerPed.Handle, "PLAYER_DEAD")) {
             Utils.Invincible(false);
             NetworkResurrectLocalPlayer(Game.PlayerPed.Position.x, Game.PlayerPed.Position.y, Game.PlayerPed.Position.z, Game.PlayerPed.Heading, true, false);
+            ClearPedBloodDamage(PlayerPedId());
             DecorSetBool(Game.PlayerPed.Handle, "PLAYER_DEAD", false);
             if (deathTick > -1) {
                 clearTick(deathTick);
@@ -70,6 +71,7 @@ export class Client {
                     
                     Utils.Invincible(false);
                     NetworkResurrectLocalPlayer(positions[i].x, positions[i].y, positions[i].z, positions[i].heading, true, false);
+                    ClearPedBloodDamage(PlayerPedId());
                     DecorSetBool(Game.PlayerPed.Handle, "PLAYER_DEAD", false);
                     if (deathTick > -1) {
                         clearTick(deathTick);
@@ -89,7 +91,8 @@ export class Client {
 
     // Events
     private async ProcessDeath(typeOrId: number, deathData: any[]): Promise<void> {
-        await Utils.Fade();
+        // await Utils.Fade();
+        console.log("died!");
 
         Utils.showNotification(`~g~E - Revive\n\n~o~R - Respawn`);
         deathTick = setTick(async() => {
@@ -122,7 +125,25 @@ export class Client {
                 }
             } else {
                 if (Game.PlayerPed.isDead()) {
-                    DecorSetBool(Game.PlayerPed.Handle, "PLAYER_DEAD", true);
+                    await Utils.Delay(300);
+                    NetworkResurrectLocalPlayer(Game.PlayerPed.Position.x, Game.PlayerPed.Position.y, Game.PlayerPed.Position.z, Game.PlayerPed.Heading, true, false);
+                    SetEntityHealth(Game.PlayerPed.Handle, 150);
+
+                    if (Game.PlayerPed.isInVehicle) {
+                        pedVeh = Game.PlayerPed.CurrentVehicle;
+                    }
+
+                    if (pedVeh) {
+                        while (GetEntitySpeed(Game.PlayerPed.Handle) > 0.5 || IsPedRagdoll(Game.PlayerPed.Handle)) {
+                            await Utils.Delay(10);
+                        }
+
+                        lastAnim = AnimType.Vehicle;
+                        PlayAnim(lastAnim);
+                    } else {
+                        lastAnim = AnimType.Floor;
+                        PlayAnim(lastAnim);
+                    }
                 } else {
                     if (!IsPedInAnyVehicle(Game.PlayerPed.Handle, false)) {
                         if (!IsEntityPlayingAnim(Game.PlayerPed.Handle, "dead", "dead_a", 3)) {
@@ -163,7 +184,7 @@ function PlayAnim(type: AnimType): void {
             setTimeout(() => {
                 const playingAnim = IsEntityPlayingAnim(Game.PlayerPed.Handle, "dead", "dead_a", 3);
                 if (playingAnim) {
-                    DoScreenFadeIn(3000);
+                    // DoScreenFadeIn(3000);
                     Utils.Invincible(true);
                 }
             }, 0);        
@@ -178,7 +199,7 @@ function PlayAnim(type: AnimType): void {
             setTimeout(() => {
                 const playingAnim = IsEntityPlayingAnim(Game.PlayerPed.Handle, "veh@low@front_ps@idle_duck", "sit", 3);
                 if (playingAnim) {
-                    DoScreenFadeIn(3000);
+                    // DoScreenFadeIn(3000);
                     Utils.Invincible(true);
                 }
             }, 0);        
