@@ -91,8 +91,7 @@ export class Client {
 
     // Events
     private async ProcessDeath(typeOrId: number, deathData: any[]): Promise<void> {
-        // await Utils.Fade();
-        console.log("died!");
+        await Utils.Fade();
 
         Utils.showNotification(`~g~E - Revive\n\n~o~R - Respawn`);
         deathTick = setTick(async() => {
@@ -184,8 +183,8 @@ function PlayAnim(type: AnimType): void {
             setTimeout(() => {
                 const playingAnim = IsEntityPlayingAnim(Game.PlayerPed.Handle, "dead", "dead_a", 3);
                 if (playingAnim) {
-                    // DoScreenFadeIn(3000);
-                    Utils.Invincible(true);
+                    DoScreenFadeIn(3000);
+                    // Utils.Invincible(true);
                 }
             }, 0);        
         }
@@ -199,8 +198,8 @@ function PlayAnim(type: AnimType): void {
             setTimeout(() => {
                 const playingAnim = IsEntityPlayingAnim(Game.PlayerPed.Handle, "veh@low@front_ps@idle_duck", "sit", 3);
                 if (playingAnim) {
-                    // DoScreenFadeIn(3000);
-                    Utils.Invincible(true);
+                    DoScreenFadeIn(3000);
+                    // Utils.Invincible(true);
                 }
             }, 0);        
         }
